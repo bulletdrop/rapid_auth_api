@@ -57,6 +57,7 @@ function sign_up($username, $password, $hwid, $gid)
 
     if (insert_user_with_hwid($username, $password, $gid, $hwid))
     {
+        write_log("User ".$username." signed up\nFor GID: ". $gid, true);
         echo json_encode(array("status" => "success", "message" => "Successfully signed up"));
         return true;
     }
@@ -88,7 +89,6 @@ function insert_user_with_hwid($username, $password, $gid, $hwid)
         encrypt_data($hwid["os_caption"], $key),
         encrypt_data($hwid["os_serial_number"], $key)
     ));
-    echo $statement->debugDumpParams();
 
     return true;
 }

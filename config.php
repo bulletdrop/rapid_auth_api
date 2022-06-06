@@ -31,4 +31,6 @@ $needs_capital_char = true;
 $needs_special_char = true;
 $needs_number = true;
 
+//Discord webhook
+$webhook_url = "https://discord.com/api/webhooks/983303814943756318/8b7O-T7W9BXyPf_swEuhSimJn9okmX3ri3PlHtDDyK0FUARxkFaRXy1gxJIZvOqTOzYB";
 ?>
