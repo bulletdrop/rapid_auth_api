@@ -54,7 +54,7 @@ function get_key_info_by_gid_and_kid($gid, $kid)
     include_once $_SERVER['DOCUMENT_ROOT'].'/rapid_auth_api/includes.php';
     include $_SERVER['DOCUMENT_ROOT'].'/rapid_auth_api/config.php';
 
-    $statement = $pdo->prepare("SELECT days_left, `lifetime`, key_name, product_id FROM loader_keys WHERE owner_gid = ? AND kid = ? AND freezed = 0 AND product_freezed = 0");
+    $statement = $pdo->prepare("SELECT days_left, `lifetime`, key_name, product_id FROM loader_keys WHERE owner_gid = ? AND kid = ? AND freezed = 0 AND product_freezed = 0 AND days_left > 0");
     $statement->execute(array($gid, $kid));   
     while($row = $statement->fetch()) {
         return array("days_left" => $row["days_left"], "lifetime" => $row["lifetime"], "key_name" => decrypt_data($row["key_name"], $key), "product_name" => get_product_name_by_product_id($row["product_id"], $gid));
