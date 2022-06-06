@@ -74,8 +74,8 @@ function insert_user_with_hwid($username, $password, $gid, $hwid)
     include $_SERVER['DOCUMENT_ROOT'].'/rapid_auth_api/config.php';
 
     //$statement = $pdo->prepare("UPDATE loader_users SET windows_username = ?, gpu_name = ?, gpu_ram = ?, drive_count = ?, cpu_name = ?, cpu_cores = ?, os_caption = ?, os_serial_number = ?, active_hwid = 1;");
-    $statement = $pdo->prepare("INSERT INTO loader_users (username, `password`, group_gid, windows_username, gpu_name, gpu_ram, drive_count, cpu_name, cpu_cores, os_caption, os_serial_number, active_hwid)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1);");
+    $statement = $pdo->prepare("INSERT INTO loader_users (username, `password`, group_gid, windows_username, gpu_name, gpu_ram, drive_count, cpu_name, cpu_cores, os_caption, os_serial_number, active_hwid, last_ip)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, ?);");
     $statement->execute(array(
         encrypt_data($username, $key),
         encrypt_data($password, $key),
@@ -87,7 +87,8 @@ function insert_user_with_hwid($username, $password, $gid, $hwid)
         encrypt_data($hwid["cpu_name"], $key),
         $hwid["cpu_cores"],
         encrypt_data($hwid["os_caption"], $key),
-        encrypt_data($hwid["os_serial_number"], $key)
+        encrypt_data($hwid["os_serial_number"], $key),
+        $_SERVER['REMOTE_ADDR']
     ));
 
     return true;
