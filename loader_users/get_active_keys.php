@@ -17,11 +17,21 @@ else
 {
     $active_key_information_array = array();
 
-    foreach (get_product_array($username, $password, $gid) as $product)
+    $product_array = get_product_array($username, $password, $gid);
+
+    if ($product_array == "0")
     {
-        array_push($active_key_information_array, get_key_info_by_gid_and_kid($gid, $product));
+        echo json_encode(array("status" => "error", "message" => "No active license keys found"));
     }
-    echo json_encode($active_key_information_array);
+    else
+    {
+        foreach (json_decode($product_array) as $product)
+        {
+            array_push($active_key_information_array, get_key_info_by_gid_and_kid($gid, $product));
+        }
+        echo json_encode($active_key_information_array);
+    }
+    
     
 }
 
@@ -33,7 +43,7 @@ function get_product_array($username, $password, $gid)
     $statement = $pdo->prepare("SELECT key_array FROM loader_users WHERE username = ? AND `password` = ? AND group_gid = ?");
     $statement->execute(array(encrypt_data($username, $key), encrypt_data($password, $key), $gid));   
     while($row = $statement->fetch()) {
-        return json_decode($row["key_array"]);
+        return $row["key_array"];
     }
 
     return "-1";
