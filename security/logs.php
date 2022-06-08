@@ -22,7 +22,6 @@ function write_log_in_db($message, $date)
     include_once $_SERVER['DOCUMENT_ROOT'].'/rapid_auth_api/includes.php';
     include $_SERVER['DOCUMENT_ROOT'].'/rapid_auth_api/config.php';
 
-    //$statement = $pdo->prepare("UPDATE loader_users SET windows_username = ?, gpu_name = ?, gpu_ram = ?, drive_count = ?, cpu_name = ?, cpu_cores = ?, os_caption = ?, os_serial_number = ?, active_hwid = 1;");
     $statement = $pdo->prepare("INSERT INTO logs (`message`, `date`) VALUES (?, ?);");
     $statement->execute(array($message, $date));
 }

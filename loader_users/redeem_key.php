@@ -10,6 +10,11 @@ $license_key = $_POST["license_key"];
 $username = $_POST["username"];
 $password = $_POST["password"];
 
+if (!passed_security_check())
+{
+    echo json_encode(array("status" => "error", "message" => "You are banned from using this API"));
+    exit();
+}
 
 if (!verify_api_key($api_key))
 {
