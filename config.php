@@ -22,7 +22,7 @@ $captial_chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 $number_chars = "0123456789";
 
 
-$allowed_chars_keys = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_";
+$allowed_chars_keys = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_\\";
 
 //Password Policy
 $password_length = 8;

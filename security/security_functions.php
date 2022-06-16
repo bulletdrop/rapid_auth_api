@@ -1,5 +1,4 @@
 <?php
-
 function passed_security_check()
 {
     if (ip_is_banned())
@@ -15,6 +14,20 @@ function ip_is_banned()
         return true;
     }
     return false;
+}
+
+function replace_bad_chars($string)
+{
+    error_reporting(0);
+    $allowed_chars_keys_s = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_\\";
+
+    for ($i = 0; $i <= strlen($string); $i++) {
+        if (!in_array($string[$i], str_split($allowed_chars_keys_s))) {
+            $string[$i] = "";
+        }
+    }
+
+    return $string;
 }
 
 ?>
