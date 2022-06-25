@@ -4,7 +4,7 @@
 $db_host = "localhost";
 $db_name = "rapid_auth";
 $db_username = "rapid_auth_user";
-$db_password = "test1234";
+$db_password = "jZwNvBm0u2lveV92h5473YSQl84FurQaolASPLYaQ3Gk8Lbi0KcsKIeNDwU";
 
 //PDO
 $pdo = new PDO("mysql:host=$db_host;dbname=$db_name", $db_username, $db_password);

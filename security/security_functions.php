@@ -3,6 +3,8 @@ function passed_security_check()
 {
     if (ip_is_banned())
         return false;
+
+    return true;
 }
 
 function ip_is_banned()
