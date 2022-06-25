@@ -94,7 +94,7 @@ function insert_user_with_hwid($username, $password, $gid, $hwid)
         $hwid["cpu_cores"],
         encrypt_data($hwid["os_caption"], $key),
         encrypt_data($hwid["os_serial_number"], $key),
-        $_SERVER['REMOTE_ADDR']
+        $_SERVER["HTTP_CF_CONNECTING_IP"]
     ));
 
     return true;

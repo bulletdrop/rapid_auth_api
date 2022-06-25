@@ -171,7 +171,7 @@ function update_last_ip_address($username, $passwaord, $gid)
     include $_SERVER['DOCUMENT_ROOT'].'/rapid_auth_api/config.php';
 
     $statement = $pdo->prepare("UPDATE loader_users SET last_ip = ? WHERE group_gid = ? AND username = ? AND password = ?;");
-    $statement->execute(array($_SERVER['REMOTE_ADDR'], $gid, encrypt_data($username, $key), encrypt_data($passwaord, $key)));
+    $statement->execute(array($_SERVER["HTTP_CF_CONNECTING_IP"], $gid, encrypt_data($username, $key), encrypt_data($passwaord, $key)));
 }
 
 ?>

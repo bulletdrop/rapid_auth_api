@@ -35,7 +35,7 @@ else
         {
             array_push($active_key_information_array, get_key_info_by_gid_and_kid($gid, $product));
         }
-        echo json_encode($active_key_information_array);
+        echo json_encode(array("status" => "success", "products" =>$active_key_information_array));
     }
     
     
