@@ -1,4 +1,5 @@
 <?php
+
 function passed_security_check()
 {
     if (ip_is_banned())
@@ -30,6 +31,20 @@ function replace_bad_chars($string)
     }
 
     return $string;
+}
+
+function get_openssl_key_by_api_key($api_key)
+{
+    include_once $_SERVER['DOCUMENT_ROOT'].'/rapid_auth_api/includes.php';
+    include $_SERVER['DOCUMENT_ROOT'].'/rapid_auth_api/config.php'; 
+
+    $statement = $pdo->prepare("SELECT openssl_crypting_key FROM dashboard_groups WHERE api_key = ?");
+    $statement->execute(array($api_key));   
+    while($row = $statement->fetch()) {
+        return $row["openssl_crypting_key"];
+    }
+
+    return "-1";
 }
 
 ?>

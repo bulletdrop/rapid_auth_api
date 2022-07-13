@@ -1,5 +1,5 @@
 <?php
-
+error_reporting(0);
 include_once $_SERVER['DOCUMENT_ROOT'].'/rapid_auth_api/includes.php';
 include $_SERVER['DOCUMENT_ROOT'].'/rapid_auth_api/config.php';
 
@@ -10,19 +10,20 @@ if (!passed_security_check())
 }
 
 $api_key = $_POST["api_key"];
-$username = $_POST["username"];
-$password = $_POST["password"];
+$open_ssl_key = get_openssl_key_by_api_key($api_key);
+$username = open_ssl_decrypt_rapid_auth($_POST["username"], $open_ssl_key);
+$password = open_ssl_decrypt_rapid_auth($_POST["password"], $open_ssl_key);
 $gid = get_gid_by_api_key($api_key);
 
 $hwid = array(
-    "windows_username" => $_POST["windows_username"],
-    "gpu_name" => $_POST["gpu_name"],
-    "gpu_ram" => $_POST["gpu_ram"],
-    "drive_count" => $_POST["drive_count"],
-    "cpu_name" => $_POST["cpu_name"],
-    "cpu_cores" => $_POST["cpu_cores"],
-    "os_caption" => $_POST["os_caption"],
-    "os_serial_number" => $_POST["os_serial_number"]
+    "windows_username" => open_ssl_decrypt_rapid_auth($_POST["windows_username"], $open_ssl_key),
+    "gpu_name" => open_ssl_decrypt_rapid_auth($_POST["gpu_name"], $open_ssl_key),
+    "gpu_ram" => open_ssl_decrypt_rapid_auth($_POST["gpu_ram"], $open_ssl_key),
+    "drive_count" => open_ssl_decrypt_rapid_auth($_POST["drive_count"], $open_ssl_key),
+    "cpu_name" => open_ssl_decrypt_rapid_auth($_POST["cpu_name"], $open_ssl_key),
+    "cpu_cores" => open_ssl_decrypt_rapid_auth($_POST["cpu_cores"], $open_ssl_key),
+    "os_caption" => open_ssl_decrypt_rapid_auth($_POST["os_caption"], $open_ssl_key),
+    "os_serial_number" => open_ssl_decrypt_rapid_auth($_POST["os_serial_number"], $open_ssl_key)
 );
 
 foreach ($hwid as $item)

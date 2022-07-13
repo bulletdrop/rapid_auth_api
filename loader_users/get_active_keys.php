@@ -10,13 +10,14 @@ if (!passed_security_check())
 }
 
 $api_key = $_POST["api_key"];
-$username = $_POST["username"];
-$password = $_POST["password"];
+$open_ssl_key = get_openssl_key_by_api_key($api_key);
+$username = open_ssl_decrypt_rapid_auth($_POST["username"], $open_ssl_key);
+$password = open_ssl_decrypt_rapid_auth($_POST["password"], $open_ssl_key);
 $gid = get_gid_by_api_key($api_key);
 
 if (!verify_api_key($api_key))
 {
-    echo json_encode(array("status" => "error", "message" => "Invalid API Key"));
+    echo open_ssl_encrypt_rapid_auth(json_encode(array("status" => "error", "message" => "Invalid API Key")), $open_ssl_key);
     exit();
 }
 else
@@ -27,7 +28,7 @@ else
 
     if ($product_array == "0")
     {
-        echo json_encode(array("status" => "error", "message" => "No active license keys found"));
+        echo open_ssl_encrypt_rapid_auth(json_encode(array("status" => "error", "message" => "No active license keys found")), $open_ssl_key);
     }
     else
     {
@@ -35,7 +36,7 @@ else
         {
             array_push($active_key_information_array, get_key_info_by_gid_and_kid($gid, $product));
         }
-        echo json_encode(array("status" => "success", "products" =>$active_key_information_array));
+        echo open_ssl_encrypt_rapid_auth(json_encode(array("status" => "success", "products" =>$active_key_information_array)), $open_ssl_key);
     }
     
     

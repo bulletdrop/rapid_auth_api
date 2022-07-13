@@ -4,21 +4,22 @@ include_once $_SERVER['DOCUMENT_ROOT'].'/rapid_auth_api/includes.php';
 include $_SERVER['DOCUMENT_ROOT'].'/rapid_auth_api/config.php';
 
 $api_key = $_POST["api_key"];
+$open_ssl_key = get_openssl_key_by_api_key($api_key);
 $gid = get_gid_by_api_key($api_key);
-$license_key = $_POST["license_key"];
+$license_key = open_ssl_decrypt_rapid_auth($_POST["license_key"], $open_ssl_key);
 
-$username = $_POST["username"];
-$password = $_POST["password"];
+$username = open_ssl_decrypt_rapid_auth($_POST["username"], $open_ssl_key);
+$password = open_ssl_decrypt_rapid_auth($_POST["password"], $open_ssl_key);
 
 if (!passed_security_check())
 {
-    echo json_encode(array("status" => "error", "message" => "You are banned from using this API"));
+    echo open_ssl_encrypt_rapid_auth(json_encode(array("status" => "error", "message" => "You are banned from using this API")), $open_ssl_key);
     exit();
 }
 
 if (!verify_api_key($api_key))
 {
-    echo json_encode(array("status" => "error", "message" => "Invalid API Key"));
+    echo open_ssl_encrypt_rapid_auth(json_encode(array("status" => "error", "message" => "Invalid API Key")), $open_ssl_key);
     exit();
 }
 
@@ -26,7 +27,7 @@ $key_valid = license_key_valid($license_key, $gid);
 
 if (!$key_valid)
 {
-    echo json_encode(array("status" => "error", "message" => "Invalid License Key"));
+    echo open_ssl_encrypt_rapid_auth(json_encode(array("status" => "error", "message" => "Invalid License Key")), $open_ssl_key);
     exit();
 }
 else
@@ -46,7 +47,7 @@ else
         update_key_array($username, $password, $gid, $new_product_array);
         update_keys_table($key_valid, $gid, get_uuid_by_username_and_gid($username, $gid));
 
-        echo json_encode(array("stauts" => "success", "message" => "License Key Successfully Added"));
+        echo open_ssl_encrypt_rapid_auth(json_encode(array("stauts" => "success", "message" => "License Key Successfully Added")), $open_ssl_key);
     }
 }
 
