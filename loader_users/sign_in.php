@@ -11,26 +11,26 @@ if (!passed_security_check())
 
 $api_key = $_POST["api_key"];
 $open_ssl_key = get_openssl_key_by_api_key($api_key);
-$username = open_ssl_decrypt_rapid_auth($_POST["username"], $open_ssl_key);
-$password = open_ssl_decrypt_rapid_auth($_POST["password"], $open_ssl_key);
+$username = rn_cryptor_decrypt_rapid_auth($_POST["username"], $open_ssl_key);
+$password = rn_cryptor_decrypt_rapid_auth($_POST["password"], $open_ssl_key);
 $gid = get_gid_by_api_key($api_key);
 
 $hwid = array(
-    "windows_username" => open_ssl_decrypt_rapid_auth($_POST["windows_username"], $open_ssl_key),
-    "gpu_name" => open_ssl_decrypt_rapid_auth($_POST["gpu_name"], $open_ssl_key),
-    "gpu_ram" => open_ssl_decrypt_rapid_auth($_POST["gpu_ram"], $open_ssl_key),
-    "drive_count" => open_ssl_decrypt_rapid_auth($_POST["drive_count"], $open_ssl_key),
-    "cpu_name" => open_ssl_decrypt_rapid_auth($_POST["cpu_name"], $open_ssl_key),
-    "cpu_cores" => open_ssl_decrypt_rapid_auth($_POST["cpu_cores"], $open_ssl_key),
-    "os_caption" => open_ssl_decrypt_rapid_auth($_POST["os_caption"], $open_ssl_key),
-    "os_serial_number" => open_ssl_decrypt_rapid_auth($_POST["os_serial_number"], $open_ssl_key)
+    "windows_username" => rn_cryptor_decrypt_rapid_auth($_POST["windows_username"], $open_ssl_key),
+    "gpu_name" => rn_cryptor_decrypt_rapid_auth($_POST["gpu_name"], $open_ssl_key),
+    "gpu_ram" => rn_cryptor_decrypt_rapid_auth($_POST["gpu_ram"], $open_ssl_key),
+    "drive_count" => rn_cryptor_decrypt_rapid_auth($_POST["drive_count"], $open_ssl_key),
+    "cpu_name" => rn_cryptor_decrypt_rapid_auth($_POST["cpu_name"], $open_ssl_key),
+    "cpu_cores" => rn_cryptor_decrypt_rapid_auth($_POST["cpu_cores"], $open_ssl_key),
+    "os_caption" => rn_cryptor_decrypt_rapid_auth($_POST["os_caption"], $open_ssl_key),
+    "os_serial_number" => rn_cryptor_decrypt_rapid_auth($_POST["os_serial_number"], $open_ssl_key)
 );
 
 foreach ($hwid as $item)
 {
     if (strlen($item) < 1)
     {
-        echo json_encode(array("status" => "error", "message" => "Missing hardware information"));
+        echo rn_cryptor_encrypt_rapid_auth(json_encode(array("status" => "error", "message" => "Missing hardware information")), $open_ssl_key);
         exit();
     }
 }
@@ -38,30 +38,30 @@ foreach ($hwid as $item)
 switch (false)
 {
     case verify_api_key($api_key):
-        echo json_encode(array("status" => "error", "message" => "Invalid API key"));
+        echo rn_cryptor_encrypt_rapid_auth(json_encode(array("status" => "error", "message" => "Invalid API key")), $open_ssl_key);
         break;
     case check_creds($username, $password, $gid):
-        echo json_encode(array("status" => "error", "message" => "Invalid username or password"));
+        echo rn_cryptor_encrypt_rapid_auth(json_encode(array("status" => "error", "message" => "Invalid username or password")), $open_ssl_key);
         break;
     case hwid_exist($username, $password, $gid):
         insert_hwid($username, $password, $gid, $hwid);
         update_last_ip_address($username, $password, $gid);
-        echo json_encode(array("status" => "success", "message" => "Successfully signed in"));
+        echo rn_cryptor_encrypt_rapid_auth(json_encode(array("status" => "success", "message" => "Successfully signed in")), $open_ssl_key);
         break;
     case verify_hwid($username, $password, $gid, $hwid):
         update_hwid_attempt($username, $password, $gid, $hwid);
         update_last_ip_address($username, $password, $gid);
-        echo json_encode(array("status" => "error", "message" => "Invalid hardware ID"));
+        echo rn_cryptor_encrypt_rapid_auth(json_encode(array("status" => "error", "message" => "Invalid hardware ID")), $open_ssl_key);
         break;        
     default:
         if (check_creds($username, $password, $gid))
         {
             update_last_ip_address($username, $password, $gid);
-            echo json_encode(array("status" => "success", "message" => "Successfully signed in"));
+            echo rn_cryptor_encrypt_rapid_auth(json_encode(array("status" => "success", "message" => "Successfully signed in")), $open_ssl_key);
         }
         else
         {
-            echo json_encode(array("status" => "error", "message" => "Unknow error"));  
+            echo rn_cryptor_encrypt_rapid_auth(json_encode(array("status" => "error", "message" => "Unknow error")), $open_ssl_key);  
         }
         break;  
 }
@@ -174,5 +174,6 @@ function update_last_ip_address($username, $passwaord, $gid)
     $statement = $pdo->prepare("UPDATE loader_users SET last_ip = ? WHERE group_gid = ? AND username = ? AND password = ?;");
     $statement->execute(array($_SERVER["HTTP_CF_CONNECTING_IP"], $gid, encrypt_data($username, $key), encrypt_data($passwaord, $key)));
 }
+
 
 ?>

@@ -1,5 +1,5 @@
 <?php
-
+error_reporting(0);
 include_once $_SERVER['DOCUMENT_ROOT'].'/rapid_auth_api/includes.php';
 include $_SERVER['DOCUMENT_ROOT'].'/rapid_auth_api/config.php';
 
@@ -11,13 +11,13 @@ if (!passed_security_check())
 
 $api_key = $_POST["api_key"];
 $open_ssl_key = get_openssl_key_by_api_key($api_key);
-$username = open_ssl_decrypt_rapid_auth($_POST["username"], $open_ssl_key);
-$password = open_ssl_decrypt_rapid_auth($_POST["password"], $open_ssl_key);
+$username = rn_cryptor_decrypt_rapid_auth($_POST["username"], $open_ssl_key);
+$password = rn_cryptor_decrypt_rapid_auth($_POST["password"], $open_ssl_key);
 $gid = get_gid_by_api_key($api_key);
 
 if (!verify_api_key($api_key))
 {
-    echo open_ssl_encrypt_rapid_auth(json_encode(array("status" => "error", "message" => "Invalid API Key")), $open_ssl_key);
+    echo rn_cryptor_encrypt_rapid_auth(json_encode(array("status" => "error", "message" => "Invalid API Key")), $open_ssl_key);
     exit();
 }
 else
@@ -28,7 +28,7 @@ else
 
     if ($product_array == "0")
     {
-        echo open_ssl_encrypt_rapid_auth(json_encode(array("status" => "error", "message" => "No active license keys found")), $open_ssl_key);
+        echo rn_cryptor_encrypt_rapid_auth(json_encode(array("status" => "error", "message" => "No active license keys found")), $open_ssl_key);
     }
     else
     {
@@ -36,7 +36,7 @@ else
         {
             array_push($active_key_information_array, get_key_info_by_gid_and_kid($gid, $product));
         }
-        echo open_ssl_encrypt_rapid_auth(json_encode(array("status" => "success", "products" =>$active_key_information_array)), $open_ssl_key);
+        echo rn_cryptor_encrypt_rapid_auth(json_encode(array("status" => "success", "products" =>$active_key_information_array)), $open_ssl_key);
     }
     
     
