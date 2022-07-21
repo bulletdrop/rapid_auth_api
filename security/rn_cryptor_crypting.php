@@ -1,5 +1,4 @@
 <?php
-
 function rn_cryptor_encrypt_rapid_auth($plaintext, $password)
 {
     require __DIR__ . '/../../vendor/autoload.php';

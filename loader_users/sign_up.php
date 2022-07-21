@@ -28,7 +28,7 @@ $hwid = array(
 
 if (!verify_api_key($api_key))
 {
-    echo json_encode(array("status" => "error", "message" => "Invalid API key"));
+    echo rn_cryptor_encrypt_rapid_auth(json_encode(array("status" => "error", "message" => "Invalid API key")), $open_ssl_key);
     exit();
 }
 
@@ -36,42 +36,42 @@ foreach ($hwid as $item)
 {
     if (strlen($item) < 1)
     {
-        echo json_encode(array("status" => "error", "message" => "Missing hardware information"));
+        echo rn_cryptor_encrypt_rapid_auth(json_encode(array("status" => "error", "message" => "Missing hardware information")), $open_ssl_key);
         exit();
     }
 }
 
 if (strlen($username) < 2 || strlen($password) < 2)
 {
-    echo json_encode(array("status" => "error", "message" => "Username / Password too short"));
+    echo rn_cryptor_encrypt_rapid_auth(json_encode(array("status" => "error", "message" => "Username / Password too short")), $open_ssl_key);
     exit();
 }
 
-sign_up($username, $password, $hwid, $gid);
+sign_up($username, $password, $hwid, $gid, $open_ssl_key);
 
-function sign_up($username, $password, $hwid, $gid)
+function sign_up($username, $password, $hwid, $gid, $open_ssl_key)
 {
     if (check_if_username_allready_taken($username, $gid))
     {
-        echo json_encode(array("status" => "error", "message" => "Username already taken"));
+        echo rn_cryptor_encrypt_rapid_auth(json_encode(array("status" => "error", "message" => "Username already taken")), $open_ssl_key);
         return false;
     }
     
     if (!check_password($password))
     {
-        echo json_encode(array("status" => "error", "message" => "Password does not meet requirements"));
+        echo rn_cryptor_encrypt_rapid_auth(json_encode(array("status" => "error", "message" => "Password does not meet requirements")), $open_ssl_key);
         return false;
     }
 
     if (insert_user_with_hwid($username, $password, $gid, $hwid))
     {
         write_log("User ".$username." signed up\nFor GID: ". $gid, true);
-        echo json_encode(array("status" => "success", "message" => "Successfully signed up"));
+        echo rn_cryptor_encrypt_rapid_auth(json_encode(array("status" => "success", "message" => "Successfully signed up")), $open_ssl_key);
         return true;
     }
     else
     {
-        echo json_encode(array("status" => "error", "message" => "Unknown error"));
+        echo rn_cryptor_encrypt_rapid_auth(json_encode(array("status" => "error", "message" => "Unknown error")), $open_ssl_key);
         return false;
     }
 }

@@ -47,7 +47,7 @@ else
         update_key_array($username, $password, $gid, $new_product_array);
         update_keys_table($key_valid, $gid, get_uuid_by_username_and_gid($username, $gid));
 
-        echo rn_cryptor_encrypt_rapid_auth(json_encode(array("stauts" => "success", "message" => "License Key Successfully Added")), $open_ssl_key);
+        echo rn_cryptor_encrypt_rapid_auth(json_encode(array("status" => "success", "message" => "License Key Successfully Added")), $open_ssl_key);
     }
 }
 
