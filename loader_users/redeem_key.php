@@ -11,11 +11,6 @@ $license_key = rn_cryptor_decrypt_rapid_auth($_POST["license_key"], $open_ssl_ke
 $username = rn_cryptor_decrypt_rapid_auth($_POST["username"], $open_ssl_key);
 $password = rn_cryptor_decrypt_rapid_auth($_POST["password"], $open_ssl_key);
 
-if (!passed_security_check())
-{
-    echo rn_cryptor_encrypt_rapid_auth(json_encode(array("status" => "error", "message" => "You are banned from using this API")), $open_ssl_key);
-    exit();
-}
 
 if (!verify_api_key($api_key))
 {

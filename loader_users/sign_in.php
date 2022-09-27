@@ -1,14 +1,8 @@
 <?php
-error_reporting(0);
+//error_reporting(0);
 
 include_once $_SERVER['DOCUMENT_ROOT'].'/rapid_auth_api/includes.php';
 include $_SERVER['DOCUMENT_ROOT'].'/rapid_auth_api/config.php';
-
-if (!passed_security_check())
-{
-    echo json_encode(array("status" => "error", "message" => "You are banned from using this API"));
-    exit();
-}
 
 $api_key = $_POST["api_key"];
 $open_ssl_key = get_openssl_key_by_api_key($api_key);
@@ -38,10 +32,16 @@ foreach ($hwid as $item)
 
 switch (false)
 {
+    case !ip_is_banned($_SERVER['REMOTE_ADDR']):
+        echo rn_cryptor_encrypt_rapid_auth(json_encode(array("status" => "error", "message" => "You are banned from using this API")), $open_ssl_key);
+        exit();
+        break;
     case verify_api_key($api_key):
+        add_fail($_SERVER['REMOTE_ADDR']);
         echo rn_cryptor_encrypt_rapid_auth(json_encode(array("status" => "error", "message" => "Invalid API key")), $open_ssl_key);
         break;
     case check_creds($username, $password, $gid):
+        add_fail($_SERVER['REMOTE_ADDR']);
         echo rn_cryptor_encrypt_rapid_auth(json_encode(array("status" => "error", "message" => "Invalid username or password")), $open_ssl_key);
         break;
     case hwid_exist($username, $password, $gid):
@@ -50,6 +50,7 @@ switch (false)
         echo rn_cryptor_encrypt_rapid_auth(json_encode(array("status" => "success", "message" => "Successfully signed in")), $open_ssl_key);
         break;
     case verify_hwid($username, $password, $gid, $hwid):
+        add_fail($_SERVER['REMOTE_ADDR']);
         update_hwid_attempt($username, $password, $gid, $hwid);
         update_last_ip_address($username, $password, $gid);
         echo rn_cryptor_encrypt_rapid_auth(json_encode(array("status" => "error", "message" => "Invalid hardware ID")), $open_ssl_key);
@@ -62,6 +63,7 @@ switch (false)
         }
         else
         {
+            add_fail($_SERVER['REMOTE_ADDR']);
             echo rn_cryptor_encrypt_rapid_auth(json_encode(array("status" => "error", "message" => "Unknow error")), $open_ssl_key);  
         }
         break;  

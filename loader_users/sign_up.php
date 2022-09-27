@@ -3,12 +3,6 @@ error_reporting(0);
 include_once $_SERVER['DOCUMENT_ROOT'].'/rapid_auth_api/includes.php';
 include $_SERVER['DOCUMENT_ROOT'].'/rapid_auth_api/config.php';
 
-if (!passed_security_check())
-{
-    echo json_encode(array("status" => "error", "message" => "You are banned from using this API"));
-    exit();
-}
-
 $api_key = $_POST["api_key"];
 $open_ssl_key = get_openssl_key_by_api_key($api_key);
 $username = rn_cryptor_decrypt_rapid_auth($_POST["username"], $open_ssl_key);
@@ -51,6 +45,12 @@ sign_up($username, $password, $hwid, $gid, $open_ssl_key);
 
 function sign_up($username, $password, $hwid, $gid, $open_ssl_key)
 {
+    if (ip_is_banned($_SERVER['REMOTE_ADDR']))
+    {
+        echo rn_cryptor_encrypt_rapid_auth(json_encode(array("status" => "error", "message" => "You are banned from using this API")), $open_ssl_key);
+        exit();
+    }
+
     if (check_if_username_allready_taken($username, $gid))
     {
         echo rn_cryptor_encrypt_rapid_auth(json_encode(array("status" => "error", "message" => "Username already taken")), $open_ssl_key);
