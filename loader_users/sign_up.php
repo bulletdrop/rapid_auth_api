@@ -45,7 +45,7 @@ sign_up($username, $password, $hwid, $gid, $open_ssl_key);
 
 function sign_up($username, $password, $hwid, $gid, $open_ssl_key)
 {
-    if (ip_is_banned($_SERVER['REMOTE_ADDR']))
+    if (ip_is_banned($_SERVER["HTTP_CF_CONNECTING_IP"]))
     {
         echo rn_cryptor_encrypt_rapid_auth(json_encode(array("status" => "error", "message" => "You are banned from using this API")), $open_ssl_key);
         exit();

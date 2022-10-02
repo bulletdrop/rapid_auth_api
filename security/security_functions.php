@@ -2,7 +2,7 @@
 
 function passed_security_check()
 {
-    if (ip_is_banned($_SERVER['REMOTE_ADDR']))
+    if (ip_is_banned($_SERVER["HTTP_CF_CONNECTING_IP"]))
         return false;
 
     return true;
